@@ -5,8 +5,9 @@ import { App } from "../../launcher/src/app/App";
 import { createMockPlatform, type MockLog } from "../../launcher/src/platform/mock";
 import { LAYOUT_KEY } from "../../launcher/src/services/layout";
 
-const press = (keyCode: number, type: "keydown" | "keyup" = "keydown") =>
+const press = (keyCode: number, type: "keydown" | "keyup" = "keydown"): void => {
   window.dispatchEvent(new KeyboardEvent(type, { keyCode } as KeyboardEventInit));
+};
 const ok = () => {
   press(13);
   press(13, "keyup");
