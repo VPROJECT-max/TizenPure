@@ -80,7 +80,32 @@ def open_after_power_on(host, log, clock=time.monotonic, sleep=time.sleep, statu
     return bool(me.get("visible"))
 
 
-def run(host, log=print, sleep=time.sleep):  # pragma: no cover - endless loop
+def single_instance(lock_path):
+    """Hold an exclusive lock for this process's lifetime; False if another helper has it."""
+    import os
+
+    handle = open(lock_path, "a+b")
+    try:
+        if os.name == "nt":
+            import msvcrt
+
+            handle.seek(0)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        handle.close()
+        return False
+    single_instance.handle = handle  # keep the lock open until exit
+    return True
+
+
+def run(host, log=print, sleep=time.sleep, lock_path=None):  # pragma: no cover - endless loop
+    if lock_path is not None and not single_instance(lock_path):
+        log("Another autostart helper is already running; exiting.")
+        return
     log(f"Watching {host}: TizenPure opens whenever the TV powers on. Ctrl+C to stop.")
     previous = power_state(host)
     while True:

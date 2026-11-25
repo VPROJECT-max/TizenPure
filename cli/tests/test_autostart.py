@@ -55,3 +55,18 @@ def test_startup_script_quotes_paths():
     script = autostart.vbs_script([r"C:\Program Files\tp\tizenpure.exe", "--tv", "10.0.0.5", "autostart", "run"])
     assert script.startswith('CreateObject("WScript.Shell").Run "')
     assert r'"""C:\Program Files\tp\tizenpure.exe""' in script and ", 0, False" in script
+
+
+def test_only_one_helper_runs(tmp_path):
+    lock = tmp_path / "autostart.lock"
+    assert autostart.single_instance(lock)
+    import subprocess
+    import sys
+
+    code = (
+        "import sys; sys.path.insert(0, sys.argv[1]); from tizenpure import autostart; "
+        "print(autostart.single_instance(sys.argv[2]))"
+    )
+    src = str(__import__("pathlib").Path(autostart.__file__).parents[1])
+    out = subprocess.run([sys.executable, "-c", code, src, str(lock)], capture_output=True, text=True, check=True)
+    assert out.stdout.strip() == "False"

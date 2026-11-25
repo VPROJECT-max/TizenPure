@@ -252,7 +252,13 @@ def cmd_autostart(args):
                 with open(path, "a", encoding="utf-8") as handle:
                     handle.write(f"{datetime.datetime.now():%Y-%m-%d %H:%M:%S} {message}\n")
 
-        autostart.run(host, log=log)
+        try:
+            autostart.run(host, log=log, lock_path=state.private_dir() / "autostart.lock")
+        except BaseException as error:  # a hidden helper has no console: record why it stopped
+            import traceback
+
+            log("stopped: " + "".join(traceback.format_exception(error)).strip())
+            raise
         return
     if args.autostart_command == "test":
         host = pick_tv(args)

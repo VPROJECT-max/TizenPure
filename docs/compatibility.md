@@ -60,7 +60,9 @@ watcher was not running until TizenPure was opened. Two layers fix it:
 2. **From an always-on PC** (covers power cuts): `tizenpure autostart install` adds a hidden
    helper to your Windows Startup folder. When the TV powers on it opens TizenPure through
    the TV's local API (no Developer Mode), never over an app that is already on screen.
-   `tizenpure autostart uninstall` removes it.
+   `tizenpure autostart uninstall` removes it. Only one helper runs at a time; its log is
+   `%APPDATA%\TizenPure\logsutostart.log`. It uses the TV address you installed it with,
+   so give the TV a fixed address (DHCP reservation) in your router.
 
 Updating TizenPure: the TV keeps a running watcher alive across reinstalls. From 0.1.1
 the launcher detects an outdated watcher and restarts it; older builds need one TV restart.
