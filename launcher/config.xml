@@ -2,8 +2,7 @@
 <!-- TizenPure launcher. Public-level privileges only, so it installs with a free Samsung
      developer certificate. The watcher service starts on boot and reopens TizenPure when
      Samsung Home covers it; it disables itself after repeated failures (see docs/safety.md). -->
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
-        id="https://github.com/VPROJECT-max/TizenPure/launcher" version="0.1.1" viewmodes="maximized">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="https://github.com/VPROJECT-max/TizenPure/launcher" version="0.2.0" viewmodes="maximized">
   <name>TizenPure</name>
   <description>A clean, fast home screen for Samsung TVs.</description>
   <icon src="icon.png"/>
