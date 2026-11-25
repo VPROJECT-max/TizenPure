@@ -20,6 +20,10 @@ var STORE_FILE = "tizenpure-watcher-v1.json";
 var OK = 200;
 var CONTROL_HEADER = "x-tizenpure";
 var LAUNCHER_ORIGINS = { "null": true, "file://": true };
+// Replaced at build time with a hash of the service sources. The launcher compares it with
+// its own copy and restarts an outdated watcher after an update (the TV keeps a running
+// service alive across reinstalls).
+var SERVICE_BUILD = "__SERVICE_BUILD__";
 
 var watcher = null;
 var server = null;
@@ -29,6 +33,12 @@ try {
   fs = require("fs");
 } catch (e) {
   fs = null;
+}
+var os = null;
+try {
+  os = require("os");
+} catch (e) {
+  os = null;
 }
 
 function getJson(path, cb) {
@@ -144,6 +154,26 @@ function resolveStore(done) {
 }
 
 // Only the launcher's own origin may read replies; other pages get no CORS header at all.
+function withBuild(value) {
+  if (value && typeof value === "object") {
+    value.build = SERVICE_BUILD;
+  }
+  return value;
+}
+
+function exitService() {
+  module.exports.onExit();
+  try {
+    tizen.application.getCurrentApplication().exit();
+  } catch (e) {
+    try {
+      process.exit(0);
+    } catch (ignored) {
+      /* the runtime will reap us */
+    }
+  }
+}
+
 function reply(res, code, value, origin) {
   var headers = { "Content-Type": "application/json", "Cache-Control": "no-store" };
   if (origin && LAUNCHER_ORIGINS[origin]) {
@@ -201,7 +231,7 @@ function handle(req, res) {
       reply(res, 403, { error: "launcher only" });
       return;
     }
-    if (["/mode", "/boot", "/enable", "/disable"].indexOf(path) < 0) {
+    if (["/mode", "/boot", "/enable", "/disable", "/exit"].indexOf(path) < 0) {
       reply(res, 404, { error: "not found" }, origin);
       return;
     }
@@ -214,6 +244,11 @@ function handle(req, res) {
         reply(res, 400, { error: "bad mode" }, origin);
         return;
       }
+      if (path === "/exit") {
+        reply(res, OK, { exiting: true }, origin);
+        setTimeout(exitService, 100);
+        return;
+      }
       if (path === "/boot") {
         watcher.setOpenOnBoot(query.value === "1");
       } else if (path === "/enable") {
@@ -221,7 +256,7 @@ function handle(req, res) {
       } else if (path === "/disable") {
         watcher.disable();
       }
-      reply(res, OK, watcher.status(), origin);
+      reply(res, OK, withBuild(watcher.status()), origin);
     });
     return;
   }
@@ -243,7 +278,7 @@ function handle(req, res) {
     reply(res, 404, { error: "not found" }, origin);
     return;
   }
-  reply(res, OK, watcher.status(), origin);
+  reply(res, OK, withBuild(watcher.status()), origin);
 }
 
 function start() {
@@ -263,6 +298,9 @@ function start() {
       appStatus: appStatus,
       tvInfo: tvInfo,
       launchSelf: launchSelf,
+      uptimeS: function () {
+        return os && os.uptime ? os.uptime() : null;
+      },
       load: persistent ? load : null,
       save: persistent ? save : null
     });

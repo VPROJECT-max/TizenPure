@@ -3,7 +3,7 @@
      developer certificate. The watcher service starts on boot and reopens TizenPure when
      Samsung Home covers it; it disables itself after repeated failures (see docs/safety.md). -->
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
-        id="https://github.com/VPROJECT-max/TizenPure/launcher" version="0.1.0" viewmodes="maximized">
+        id="https://github.com/VPROJECT-max/TizenPure/launcher" version="0.1.1" viewmodes="maximized">
   <name>TizenPure</name>
   <description>A clean, fast home screen for Samsung TVs.</description>
   <icon src="icon.png"/>

@@ -16,7 +16,7 @@ sequence below and open a pull request with the results (`tizenpure doctor --jso
 
 | Model | Year | Tizen | doctor | sign/install | launcher | watcher | notes |
 |---|---|---|---|---|---|---|---|
-| UE55CU7172UXXH (Crystal UHD CU7172 55") | 2023 | 9.0 (armv7, Chromium 120.0.6099) | ✅ | ✅ | ✅ | ✅ | Home returns in ~3 s; double-Home escape, Netflix and YouTube report visibility and are never interrupted. Cold boot and Developer Mode off: pending |
+| UE55CU7172UXXH (Crystal UHD CU7172 55") | 2023 | 9.0 (armv7, Chromium 120.0.6099) | ✅ | ✅ | ✅ | ✅ | Home returns in ~3 s; double-Home escape, Netflix and YouTube report visibility and are never interrupted. Cold boot: needs Autorun Last App or `tizenpure autostart` (see below); Developer Mode off: pending |
 | UE65CU7172UXXH (65") | 2023 | 9.0 | - | - | - | - | launcher attested by AeroTizen's table |
 
 ## Acceptance sequence
@@ -46,6 +46,24 @@ Read-only first; stop at the first failure.
   report `visible` and are followed, never interrupted; Home inside Netflix → back in ~2.5 s.
 - Samsung Home (`com.samsung.tv.csfs`) cannot be opened over SDB (`launch failed[400]`), so
   the Control Center's "Samsung Home" tile relies on the app-level launch from the TV itself.
+
+## Opening TizenPure at power-on
+
+A background service signed with a free Samsung certificate is **not started at boot** on
+retail TVs (Samsung reserves that for partner-signed apps; prelaunch has been unsupported
+since 2019). Verified on the CU7172: after a power cut the TV opened Live TV and TizenPure's
+watcher was not running until TizenPure was opened. Two layers fix it:
+
+1. **On the TV**: Start Screen Options → Start with Smart Hub Home **Off**, Autorun Last App
+   **On**, Autorun Samsung TV Plus **Off**. This reopens TizenPure on power-on from standby
+   when it was the last app used.
+2. **From an always-on PC** (covers power cuts): `tizenpure autostart install` adds a hidden
+   helper to your Windows Startup folder. When the TV powers on it opens TizenPure through
+   the TV's local API (no Developer Mode), never over an app that is already on screen.
+   `tizenpure autostart uninstall` removes it.
+
+Updating TizenPure: the TV keeps a running watcher alive across reinstalls. From 0.1.1
+the launcher detects an outdated watcher and restarts it; older builds need one TV restart.
 
 ## Watcher check
 

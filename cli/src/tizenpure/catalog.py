@@ -13,7 +13,9 @@ Parsing ported from AeroTizen (MIT). Classification rewritten for TizenPure so t
 third-party streaming app is ever auto-selected for removal.
 """
 
+import json
 import re
+from pathlib import Path
 
 STORE_PKG = re.compile(r"^[A-Za-z0-9]{10}$")
 TIZENPURE_PKG = "TizenPure0"
@@ -224,3 +226,11 @@ def packages(applist_text):
         pkg["class"] = next(c for c in CLASSES if c in classes)
         pkg["name"] = min((a["name"] for a in pkg["apps"]), key=len)
     return pkgs
+
+
+GUIDE_PATH = Path(__file__).with_name("data") / "app-guide.json"
+
+
+def guide():
+    """{app id: {"what", "action", "note"}} for apps TizenPure can explain."""
+    return json.loads(GUIDE_PATH.read_text(encoding="utf-8"))["apps"]

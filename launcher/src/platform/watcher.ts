@@ -15,6 +15,8 @@ const WRT_PLATFORM = 9;
 const ACTIVITY_THROTTLE_MS = 2000;
 const HANDOFF_WAIT_MS = 500;
 const WRT_EVENT = "tizenpure-wrt-service";
+const RESTART_WAIT_MS = 1500;
+declare const __SERVICE_BUILD__: string;
 const WRT_SOURCE =
   "import { Service } from 'wrt:service'; window.dispatchEvent(new CustomEvent('" + WRT_EVENT + "', { detail: Service }));";
 
@@ -105,8 +107,25 @@ export const createWatcherClient = (tizen: TizenLike | null, platformVersion: nu
     } catch {
       /* fall through to polling and the wrt fallback */
     }
+    let restarted = false;
     const poll = () => {
       void request("GET", "/status").then((reply) => {
+        const build = reply ? (reply as unknown as { build?: string }).build : undefined;
+        if (reply && !restarted && __SERVICE_BUILD__ !== "dev" && build !== __SERVICE_BUILD__) {
+          // An older watcher survived an update: ask it to exit, then start the new one.
+          restarted = true;
+          void request("POST", "/exit").then(() =>
+            setTimeout(() => {
+              try {
+                if (tizen) tizen.application.launchAppControl(new tizen.ApplicationControl(SERVICE_OPERATION), SERVICE_ID, () => {}, () => {});
+              } catch {
+                /* the poll below keeps trying */
+              }
+              poll();
+            }, RESTART_WAIT_MS),
+          );
+          return;
+        }
         if (reply) {
           ready = true;
           starting = false;

@@ -42,6 +42,7 @@ var C = {
   START_LOOP_WINDOW_MS: 2 * 60 * 1000,
   MAX_STARTS_IN_WINDOW: 5,
   POWER_CHECK_MS: 5000,
+  BOOT_WINDOW_S: 300, // only a service start this soon after TV boot may open TizenPure
   MAX_PARALLEL: 4,
   REQUEST_TIMEOUT_MS: 1500,
   HISTORY_LIMIT: 60
@@ -101,6 +102,7 @@ function recent(list, now, windowMs) {
  *   tvInfo(cb(device|null)): cancel          -- GET :8001/api/v2/ -> device
  *   launchSelf(ok, failed)                   -- tizen.application.launch(SELF)
  *   load(): object|null, save(object): bool  -- persistent settings (may be null)
+ *   uptimeS(): number|null                   -- system uptime (os.uptime), optional
  * }
  */
 function createWatcher(deps) {
@@ -475,9 +477,25 @@ function createWatcher(deps) {
       }
     });
   }
+  // System uptime in seconds when the runtime exposes it, else null.
+  function uptime() {
+    try {
+      var value = deps.uptimeS ? deps.uptimeS() : null;
+      return typeof value === "number" && isFinite(value) ? value : null;
+    } catch (e) {
+      return null;
+    }
+  }
   function bootLaunch() {
     s.bootDone = true;
     if (!active() || !settings.openOnBoot || s.frame) {
+      return;
+    }
+    // A service (re)start long after the TV booted (auto-restart, app update) must never
+    // pop TizenPure over Live TV or HDMI, which the TV's API cannot see.
+    var up = uptime();
+    if (up === null || up > C.BOOT_WINDOW_S) {
+      log("boot-skip", up === null ? "uptime unknown" : "TV up " + Math.round(up) + " s");
       return;
     }
     deps.appStatus(C.SELF, function (me) {
@@ -595,6 +613,7 @@ function createWatcher(deps) {
         frame: s.frame,
         heartbeats: s.heartbeats,
         failures: settings.failures.length,
+        uptime: uptime(),
         history: s.history.slice(-20)
       };
     },

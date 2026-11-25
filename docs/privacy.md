@@ -52,8 +52,11 @@ use your router. Undo: *Obtain automatically*. `tizenpure dns guide` prints this
 .\tizenpure.exe debloat
 ```
 
-prints what could go, grouped as `bloat` (suggested), `optional` (only if you name it) and
-`keep` (streaming and services; refused unless you add `--allow-keep`). Nothing is removed
-without `--remove PKGID --apply` and a confirmation. Removed apps can be reinstalled from
-the store. The TV refuses to remove preinstalled apps over Developer Mode; delete or
-disable those in **Apps → Settings** on the TV.
+prints what could go (`tizenpure apps --explain` says what each app is), grouped as `bloat` (suggested), `optional` (only if you name it) and
+`keep` (streaming and services; refused unless you add `--allow-keep`). On Tizen 9 the TV refuses
+every removal over Developer Mode (`can not uninstall app`), so delete apps on the TV:
+**Apps → ⚙ Settings → app → Delete**. Preinstalled system apps (Apps store, Gaming Hub,
+Windows 365, e-Manual) can only be hidden; hide them in TizenPure (hold OK → Hide).
+
+Also turn off, if present: **Remote Management** (Settings → Support) and **Voice Wake-up**
+(Settings → General & Privacy → Voice → Bixby Settings).

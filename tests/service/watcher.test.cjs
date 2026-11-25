@@ -198,6 +198,15 @@ test("Frame TVs never get the Samsung-Home takeover (Art Mode safety)", () => {
   assert.equal(tv.state.launches, 0);
 });
 
+test("boot open: only right after the TV starts, never after a late service restart", () => {
+  // TizenPure hidden at boot (Live TV on screen), TV just started: open it once.
+  const early = boot({ apps: streaming(), uptimeAtStart: 40, healthyAtBoot: false, hiddenAtBoot: true });
+  assert.equal(early.tv.state.launches, 1);
+  // Same, but the service restarted an hour into the evening: leave Live TV/HDMI alone.
+  const late = boot({ apps: streaming(), uptimeAtStart: 3600, healthyAtBoot: false, hiddenAtBoot: true });
+  assert.equal(late.tv.state.launches, 0);
+});
+
 test("settings normalize rejects unknown or invalid data", () => {
   assert.equal(normalizeSettings(null).mode, "home");
   assert.equal(normalizeSettings({ version: 2, mode: "off" }).mode, "home");

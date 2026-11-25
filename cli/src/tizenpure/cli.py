@@ -54,6 +54,7 @@ LAUNCHER_APP_ID = "TizenPure0.Home"
 HELLO_APP_ID = "TizenPureH.Hello"
 OWN_APPS = {"launcher": LAUNCHER_APP_ID, "hello": HELLO_APP_ID}
 INSPECT_PORT = 9222
+INSPECT_TIMEOUT_S = 60
 REPO_ROOT = Path(__file__).resolve().parents[3]
 BUNDLED_LAUNCHER = Path(__file__).with_name("data") / "launcher"
 
@@ -169,8 +170,17 @@ def cmd_apps(args):
         ]
         say(json.dumps(rows, indent=2))
         return
+    guide = catalog.guide()
     for cls in catalog.CLASSES:
         group = sorted(((p, v) for p, v in pkgs.items() if v["class"] == cls), key=lambda kv: kv[1]["name"].lower())
+        if args.explain:
+            say(f"[{cls}] {len(group)}")
+            for _pkgid, v in group:
+                info = next((guide[a["appid"]] for a in v["apps"] if a["appid"] in guide), None)
+                what = info["what"] if info else "No description yet."
+                note = f" ({info['action']}{': ' + info['note'] if info.get('note') else ''})" if info else ""
+                say(f"   {v['name']:<30} {what}{note}")
+            continue
         if cls == "protected" and not args.all:
             say(f"[protected] {len(group)} platform packages hidden (use --all)")
             continue
@@ -227,6 +237,48 @@ def cmd_dns(args):
             sys.stdout.write(text)
     else:
         say(dns.guide())
+
+
+def cmd_autostart(args):
+    from tizenpure import autostart
+
+    if args.autostart_command == "run":
+        host = pick_tv(args)
+        log = say
+        if args.log:
+            path = state.private_dir("logs") / "autostart.log"
+
+            def log(message):
+                with open(path, "a", encoding="utf-8") as handle:
+                    handle.write(f"{datetime.datetime.now():%Y-%m-%d %H:%M:%S} {message}\n")
+
+        autostart.run(host, log=log)
+        return
+    if args.autostart_command == "test":
+        host = pick_tv(args)
+        say("Opening TizenPure through the TV's local API:", "accepted" if autostart.launch(host) else "refused")
+        return
+    if sys.platform != "win32":
+        raise Abort("install/uninstall is for Windows. Elsewhere run `tizenpure autostart run` from your init system.")
+    target = autostart.startup_dir() / autostart.STARTUP_NAME
+    if args.autostart_command == "status":
+        say(f"Installed: {target}" if target.exists() else "Not installed.")
+        return
+    if args.autostart_command == "uninstall":
+        if target.exists():
+            target.unlink()
+        say("Removed. TizenPure will no longer be opened by this PC at power-on.")
+        return
+    host = pick_tv(args)
+    argv = autostart.command_line(host)
+    say("This adds a small script to your Windows Startup folder that runs, hidden:")
+    say("   " + " ".join(argv))
+    say(f"   -> {target}")
+    say("It only reads the TV's power state and opens TizenPure after the TV powers on.")
+    if not confirm("Install it?", args):
+        raise Abort("Cancelled.")
+    target.write_text(autostart.vbs_script(argv), encoding="utf-8")
+    say("Installed. It starts at your next sign-in; run `tizenpure autostart run` to start it now.")
 
 
 def cmd_privacy(_args):
@@ -343,7 +395,9 @@ def cmd_launch(args):
 def cmd_inspect(args):
     app_id = OWN_APPS.get(args.target, args.target)
     host = pick_tv(args)
-    with session(host) as s:
+    # A debug launch can take 20+ s when the app is already running; restart it cleanly.
+    with DeviceSession(host, timeout=INSPECT_TIMEOUT_S) as s:
+        s.shell(f"0 was_kill {app_id}")
         port = s.debug_launch(app_id)
         say(f"Inspector on TV port {port}. Open chrome://inspect, add localhost:{args.port}. Ctrl+C to stop.")
         s.forward(args.port, port)
@@ -393,7 +447,8 @@ def cmd_debloat(args):
                 refused.append(pkgs[pkgid]["name"])
                 say("   TV said:", out[-160:] or "(nothing)")
     if refused:
-        say("\nThe TV refused these over Developer Mode. Delete them on the TV instead:")
+        say("\nThis firmware (Tizen 6+) refuses to remove store apps over Developer Mode; only apps")
+        say("installed from this PC can be removed that way. Delete these on the TV instead:")
         say("   Home > Apps > Settings (gear) > select the app > Delete\n   " + ", ".join(refused))
 
 
@@ -423,6 +478,7 @@ def parser():
     a = sub.add_parser("apps")
     a.add_argument("--all", action="store_true")
     a.add_argument("--json", action="store_true")
+    a.add_argument("--explain", action="store_true", help="what each app is and what you can safely do")
     a.set_defaults(func=cmd_apps)
 
     w = sub.add_parser("watcher")
@@ -442,6 +498,15 @@ def parser():
     ne.add_argument("--hagezi", action="store_true", help="also fetch HaGeZi's Samsung list (GPL-3.0) at run time")
     ne.add_argument("--output", "-o")
     ne.set_defaults(func=cmd_dns)
+
+    au = sub.add_parser("autostart", help="open TizenPure when the TV powers on (runs on this PC)")
+    ausub = au.add_subparsers(dest="autostart_command", required=True)
+    ar = ausub.add_parser("run")
+    ar.add_argument("--log", action="store_true", help="log to the private logs folder instead of the console")
+    for name in ("install", "uninstall", "status", "test"):
+        ausub.add_parser(name)
+    for parser_ in ausub.choices.values():
+        parser_.set_defaults(func=cmd_autostart)
 
     sub.add_parser("privacy").set_defaults(func=cmd_privacy)
     sub.add_parser("recovery").set_defaults(func=cmd_recovery)

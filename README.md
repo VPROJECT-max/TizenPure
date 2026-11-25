@@ -67,10 +67,12 @@ account and Samsung issues a certificate for **your** TV. Only Samsung is contac
 proving the whole signing path before the real launcher goes on; remove it with
 `tizenpure uninstall hello`.
 
-3. Optional: [watcher check](docs/compatibility.md#watcher-check), [DNS blocking and the
+3. Make TizenPure open at power-on: set *Start Screen Options* on the TV, and if your PC is
+   usually on, `tizenpure autostart install` ([why](docs/compatibility.md#opening-tizenpure-at-power-on)).
+4. Optional: [watcher check](docs/compatibility.md#watcher-check), [DNS blocking and the
    privacy checklist](docs/privacy.md), and `tizenpure debloat` (a dry run unless you add
    `--apply`).
-4. When you're done, turn Developer Mode **off** again ([why](docs/safety.md#developer-mode)).
+5. When you're done, turn Developer Mode **off** again ([why](docs/safety.md#developer-mode)).
 
 ## Using the launcher
 
@@ -88,6 +90,8 @@ proving the whole signing path before the real launcher goes on; remove it with
 - [Certificates](docs/certificates.md)
 - [Safety, watcher rules and recovery](docs/safety.md)
 - [Privacy: DNS and Samsung settings](docs/privacy.md)
+- [Debloat: what is possible on Tizen 9](docs/debloat.md)
+- [Making the TV faster](docs/performance.md)
 - [Compatibility and on-TV acceptance](docs/compatibility.md)
 - [Development](docs/development.md)
 

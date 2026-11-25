@@ -123,8 +123,10 @@ function boot(options = {}) {
   const clock = options.clock || createClock();
   const tv = createTv({ clock, ...options });
   const store = options.store || createStore();
-  const watcher = createWatcher({ ...tv.deps, ...clock, load: store.load, save: store.save });
+  const uptimeS = () => (options.uptimeAtStart === undefined ? 60 : options.uptimeAtStart) + (clock.now() - 1_000_000) / 1000;
+  const watcher = createWatcher({ ...tv.deps, ...clock, uptimeS, load: store.load, save: store.save });
   tv.watcher = watcher;
+  if (options.hiddenAtBoot) tv.samsungHome();
   watcher.start();
   watcher.apps(Object.keys(options.apps || {}));
   if (options.healthyAtBoot !== false) watcher.home(); // launcher opened and healthy

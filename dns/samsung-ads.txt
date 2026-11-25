@@ -15,6 +15,7 @@ samsungadhub.com
 ad.samsungadhub.com
 rd.samsungadhub.com
 tvx.adgrx.com
+rtb.adgrx.com
 samsungrm.net
 
 # Automatic content recognition (what is on screen -> targeted ads)

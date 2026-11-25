@@ -8,7 +8,7 @@ import pkg from "./package.json" with { type: "json" };
 export default defineConfig({
   root: "launcher",
   plugins: [preact()],
-  define: { __APP_VERSION__: JSON.stringify(pkg.version) },
+  define: { __APP_VERSION__: JSON.stringify(pkg.version), __SERVICE_BUILD__: JSON.stringify("dev") },
   server: { port: 5178 },
   test: {
     root: ".",

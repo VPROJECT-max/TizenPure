@@ -1,0 +1,199 @@
+{
+  "_about": "What each app/service is and what can safely be done about it. 'remove' = user-removable store app (TV: Apps > Settings > Delete, or tizenpure debloat --apply); 'disable' = only hideable/disableable in the TV's own Apps settings; 'keep' = needed or requested; 'system' = part of the TV, cannot be removed or stopped (it restarts itself).",
+  "apps": {
+    "org.tizen.netflix-app": {
+      "what": "Netflix (preinstalled build).",
+      "action": "keep",
+      "note": "Preloaded in the background at boot by Samsung."
+    },
+    "9Ur5IzDKqV.TizenYouTube": {
+      "what": "YouTube.",
+      "action": "keep",
+      "note": "Runs on Samsung's Cobalt engine (com.samsung.tv.cobalt-yt), preloaded at boot."
+    },
+    "org.tizen.primevideo": {
+      "what": "Prime Video (preinstalled build).",
+      "action": "keep",
+      "note": "Preloaded in the background at boot."
+    },
+    "MCmYXNxgcu.DisneyPlus": {
+      "what": "Disney+.",
+      "action": "keep"
+    },
+    "5b8c3eb16b.BeamCTVDev": {
+      "what": "HBO Max.",
+      "action": "keep"
+    },
+    "skysh0WTIM.SkyShowtime": {
+      "what": "SkyShowtime streaming.",
+      "action": "keep"
+    },
+    "oRxeZux3jI.voyoTizen": {
+      "what": "VOYO (Romanian streaming, PRO TV).",
+      "action": "keep"
+    },
+    "D2WiqGE6nz.AntenaPlayro20": {
+      "what": "AntenaPLAY (Antena channels, Romania).",
+      "action": "keep"
+    },
+    "FyObqYlHVG.SWEETTV": {
+      "what": "SWEET.TV live TV and films.",
+      "action": "keep"
+    },
+    "BEd6UQZYva.mggtizen": {
+      "what": "MEGOGO live TV, films, audiobooks.",
+      "action": "keep"
+    },
+    "a49iYSK3Ms.m7cp": {
+      "what": "CANAL+ (M7 satellite/IPTV app).",
+      "action": "keep"
+    },
+    "1DqYLzzOyv.fsro": {
+      "what": "Focus Sat (M7 satellite operator app, Romania).",
+      "action": "keep"
+    },
+    "vbUQClczfR.Wuakitv": {
+      "what": "Rakuten TV: film rental/store and free ad-supported channels.",
+      "action": "remove",
+      "note": "Streaming; removable if you never use it."
+    },
+    "Jz7aUrV2Q4.Twitch": {
+      "what": "Twitch live streaming.",
+      "action": "remove",
+      "note": "Streaming; removable if you never use it."
+    },
+    "org.tizen.apple.apple-music": {
+      "what": "Apple Music.",
+      "action": "remove",
+      "note": "Preinstalled; deletable in Apps settings if unused."
+    },
+    "w0wZu3xkQq.GeForceNOW": {
+      "what": "NVIDIA GeForce NOW cloud gaming.",
+      "action": "remove",
+      "note": "Gaming; removable if unused."
+    },
+    "gTNk0LKH5U.UiApp": {
+      "what": "Knife Strike, a casual game.",
+      "action": "remove"
+    },
+    "WSRedi0001.WorkspaceRedi": {
+      "what": "Samsung Workspace: remote PC / Microsoft 365 / cloud desktop.",
+      "action": "remove",
+      "note": "Only useful for remote-desktop work."
+    },
+    "yL49PNFmjW.PromotionApp": {
+      "what": "Samsung Promotion: shows Samsung offers and ads.",
+      "action": "remove",
+      "note": "Advertising; safe to remove."
+    },
+    "25emanual2.emanual": {
+      "what": "e-Manual (User Guide).",
+      "action": "disable",
+      "note": "Harmless; Samsung's offline manual. Usually cannot be deleted."
+    },
+    "com.samsung.tv.knox-browser-win365": {
+      "what": "Windows 365 cloud PC client.",
+      "action": "disable",
+      "note": "Preinstalled; hide if unused."
+    },
+    "com.samsung.tv.gaminghub": {
+      "what": "Samsung Gaming Hub (cloud gaming portal).",
+      "action": "disable",
+      "note": "System app: can be hidden from Home, not deleted."
+    },
+    "com.samsung.tv.store": {
+      "what": "Samsung Apps store.",
+      "action": "keep",
+      "note": "Needed to install and update apps."
+    },
+    "org.tizen.browser": {
+      "what": "Samsung Internet browser.",
+      "action": "keep",
+      "note": "System app; preloaded in the background."
+    },
+    "com.samsung.tv.SmartThingsApp": {
+      "what": "SmartThings (you asked to keep it).",
+      "action": "keep"
+    },
+    "com.samsung.tv.SecurityCenter": {
+      "what": "Samsung's built-in malware scanner (Smart Security).",
+      "action": "keep",
+      "note": "Security component."
+    },
+    "TizenPure0.Home": {
+      "what": "TizenPure launcher (this project).",
+      "action": "keep",
+      "note": "Remove with: tizenpure uninstall launcher."
+    }
+  },
+  "services": {
+    "com.samsung.tv.targeted-ad-service": {
+      "what": "Targeted advertising service (ad selection for Smart Hub).",
+      "how": "Privacy Choices: Interest-Based Advertisement off; DNS safe list blocks its servers."
+    },
+    "com.samsung.tv.acr": {
+      "what": "Automatic content recognition (identifies what you watch).",
+      "how": "Privacy Choices: Viewing Information Services off; DNS blocks samsungacr.com."
+    },
+    "com.samsung.tv.iacr": {
+      "what": "ACR helper.",
+      "how": "Same as ACR."
+    },
+    "com.samsung.tizen.samsung-analytics": {
+      "what": "Samsung usage analytics.",
+      "how": "Privacy Choices off; DNS safe list blocks telemetry."
+    },
+    "com.samsung.tv.ad-web-framework": {
+      "what": "Ad rendering framework for Smart Hub banners.",
+      "how": "DNS blocks ad delivery."
+    },
+    "org.tizen.multi-assistant-service": {
+      "what": "Voice assistant broker (Bixby/Alexa).",
+      "how": "Settings > General > Voice: Voice Wake-up off; assistant off if unused."
+    },
+    "com.samsung.tv.ondevice-voice": {
+      "what": "On-device voice recognition.",
+      "how": "Voice Wake-up off reduces activity; the mic button still works."
+    },
+    "com.samsung.tv.bixby-prov": {
+      "what": "Bixby provisioning.",
+      "how": "Do not sign in to Bixby if unused."
+    },
+    "com.samsung.tv.utterance-recommender-core": {
+      "what": "Suggests voice commands.",
+      "how": "Voice settings."
+    },
+    "org.tizen.tts-engine-neural": {
+      "what": "Text-to-speech engine (accessibility, voice guide).",
+      "how": "Keep: needed for Voice Guide."
+    },
+    "com.samsung.tv.health-mde-service": {
+      "what": "Samsung Health on TV (workouts, camera).",
+      "how": "System service; nothing to do."
+    },
+    "com.samsung.tv.buds-scanner": {
+      "what": "Galaxy Buds auto-connect scanner (Bluetooth).",
+      "how": "Restarts itself; Bluetooth off if you never use Bluetooth audio."
+    },
+    "com.samsung.tv.MultiControl-Service": {
+      "what": "Multi Control: share keyboard/mouse with a Samsung PC/phone.",
+      "how": "Settings > Connection > Multi Control off (if present)."
+    },
+    "com.samsung.tv.smartthingsfind-daemon": {
+      "what": "SmartThings Find (locates Galaxy devices).",
+      "how": "Part of SmartThings; keep."
+    },
+    "com.samsung.tv.content-tiles-provider": {
+      "what": "Fills Samsung Home rows with recommended content.",
+      "how": "Privacy Choices: personalised recommendations off; DNS aggressive list blocks feeds."
+    },
+    "com.samsung.tv.contentservicemanager": {
+      "what": "Content recommendations / Universal Guide backend.",
+      "how": "As above."
+    },
+    "com.samsung.tv.tvsensor-iot-service": {
+      "what": "Light/presence sensor reporting to SmartThings.",
+      "how": "Part of SmartThings; keep."
+    }
+  }
+}

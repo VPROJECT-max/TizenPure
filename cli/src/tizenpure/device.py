@@ -99,6 +99,9 @@ class DeviceSession:
     def applist(self):
         return self._call("applist")
 
+    def shell(self, command):
+        return self._call("shell", command)
+
     def push(self, data, path):
         return self._call("push", data, path)
 

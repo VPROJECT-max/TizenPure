@@ -21,6 +21,12 @@ svdca.samsungqbe.com
 samsung.com
 samsungapps.com
 samsungcloud.com
+samsungelectronics.com
+osb-apps-v2.samsungqbe.com
+osb-v2.samsungqbe.com
+time.samsungcloudsolution.com
+otnprd10.samsungcloudsolution.net
+lcprd2.samsungcloudsolution.net
 
 # Streaming and music (all must keep working)
 youtube.com

@@ -25,7 +25,7 @@ version = { attr = "tizenpure.__version__" }
 where = ["src"]
 
 [tool.setuptools.package-data]
-tizenpure = ["ca/*", "hello/*", "data/dns/*.txt", "data/launcher/**/*"]
+tizenpure = ["ca/*", "hello/*", "data/*.json", "data/dns/*.txt", "data/launcher/**/*"]
 
 [tool.ruff]
 line-length = 120

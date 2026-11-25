@@ -15,6 +15,7 @@ samsungadhub.com
 ad.samsungadhub.com
 rd.samsungadhub.com
 tvx.adgrx.com
+rtb.adgrx.com
 samsungrm.net
 samsungacr.com
 log-1.samsungacr.com
@@ -27,6 +28,5 @@ gpm.samsungqbe.com
 # --- banners, notices, recommendation feeds ---
 notice.samsungcloudsolution.com
 noticefile.samsungcloudsolution.com
-osb.samsungqbe.com
 api-hub.samsungyosemite.com
 static.doubleclick.net
