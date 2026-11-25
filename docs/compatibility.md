@@ -16,7 +16,7 @@ sequence below and open a pull request with the results (`tizenpure doctor --jso
 
 | Model | Year | Tizen | doctor | sign/install | launcher | watcher | notes |
 |---|---|---|---|---|---|---|---|
-| UE55CU7172UXXH (Crystal UHD CU7172 55") | 2023 | 9.0 (armv7, ~M120) | ✅ | pending | pending | pending | development TV |
+| UE55CU7172UXXH (Crystal UHD CU7172 55") | 2023 | 9.0 (armv7, ~M120) | ✅ | pending | pending | pending | read-only doctor passed |
 | UE65CU7172UXXH (65") | 2023 | 9.0 | - | - | - | - | launcher attested by AeroTizen's table |
 
 ## Acceptance sequence
