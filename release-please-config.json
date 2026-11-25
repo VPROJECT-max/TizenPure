@@ -1,0 +1,14 @@
+{
+  "release-type": "simple",
+  "packages": {
+    ".": {
+      "package-name": "tizenpure",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        { "type": "json", "path": "package.json", "jsonpath": "$.version" },
+        { "type": "xml", "path": "launcher/config.xml", "xpath": "//*[local-name()='widget']/@version" },
+        { "type": "generic", "path": "cli/src/tizenpure/__init__.py" }
+      ]
+    }
+  }
+}

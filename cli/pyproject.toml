@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tizenpure"
+dynamic = ["version"]
+description = "A cleaner, faster, iOS-inspired Samsung Tizen TV from your PC: safe, reversible, no root."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = ["cryptography>=41"]
+keywords = ["samsung", "tizen", "smart-tv", "launcher", "privacy", "sdb"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+tizenpure = "tizenpure.cli:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "tizenpure.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+tizenpure = ["ca/*", "hello/*", "data/dns/*.txt", "data/launcher/**/*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

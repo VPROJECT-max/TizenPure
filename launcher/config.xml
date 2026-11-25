@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TizenPure launcher. Public-level privileges only, so it installs with a free Samsung
+     developer certificate. The watcher service starts on boot and reopens TizenPure when
+     Samsung Home covers it; it disables itself after repeated failures (see docs/safety.md). -->
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
+        id="https://github.com/VPROJECT-max/TizenPure/launcher" version="0.1.0" viewmodes="maximized">
+  <name>TizenPure</name>
+  <description>A clean, fast home screen for Samsung TVs.</description>
+  <icon src="icon.png"/>
+  <content src="index.html"/>
+  <tizen:app-control>
+    <tizen:src name="index.html" reload="disable"/>
+    <tizen:operation name="http://tizen.org/appcontrol/operation/main"/>
+  </tizen:app-control>
+  <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
+  <tizen:application id="TizenPure0.Home" package="TizenPure0" required_version="2.4"/>
+  <tizen:service id="TizenPure0.Watcher" on-boot="true" auto-restart="true">
+    <tizen:content src="service/index.js"/>
+    <tizen:name>TizenPureWatcher</tizen:name>
+    <tizen:description>Returns to TizenPure when Home is pressed; stands aside for other apps</tizen:description>
+  </tizen:service>
+  <tizen:profile name="tv-samsung"/>
+  <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="enable" encryption="disable" install-location="auto" hwkey-event="enable"/>
+  <tizen:metadata key="http://samsung.com/tv/metadata/prelaunch.support" value="true"/>
+  <tizen:metadata key="http://samsung.com/tv/metadata/use.network" value="false"/>
+  <!-- The code makes no external requests: only the TV's own loopback API (:8001) and the
+       watcher (:47391). A CI test checks the bundle for external URLs. "*" is used because
+       WARP origin matching with ports is not reliable across firmware. -->
+  <access origin="*" subdomains="true"/>
+  <tizen:privilege name="http://tizen.org/privilege/internet"/>
+  <tizen:privilege name="http://tizen.org/privilege/filesystem.read"/>
+  <tizen:privilege name="http://tizen.org/privilege/filesystem.write"/>
+  <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+  <tizen:privilege name="http://tizen.org/privilege/application.info"/>
+  <tizen:privilege name="http://tizen.org/privilege/tv.window"/>
+  <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
+</widget>

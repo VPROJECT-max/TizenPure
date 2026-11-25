@@ -1,0 +1,26 @@
+# Build output
+dist/
+node_modules/
+*.wgt
+*.tsbuildinfo
+cli/build/
+cli/dist/
+*.egg-info/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.venv/
+.vite/
+
+# Private state: certificates, backups, logs, snapshots (normally in %APPDATA%\TizenPure)
+certs/
+*.p12
+password.txt
+device-profile.xml
+backups/
+snapshots/
+logs/
+*.log
+.env
+.claude/settings.local.json
+cli/src/tizenpure/data/launcher/

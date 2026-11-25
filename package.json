@@ -1,0 +1,42 @@
+{
+  "name": "tizenpure",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TizenPure launcher (Tizen web app) build, lint and test tooling.",
+  "license": "MIT",
+  "type": "module",
+  "browserslist": [
+    "chrome >= 63"
+  ],
+  "scripts": {
+    "icons": "node tools/build-icons.mjs",
+    "dev": "vite",
+    "build": "npm run icons && tsc --noEmit && node tools/build-launcher.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint launcher/src launcher/service tools --max-warnings=0",
+    "compat": "node tools/check-compat.mjs",
+    "test": "vitest run && node --test tests/service/",
+    "test:service": "node --test tests/service/",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build && npm run compat"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "dependencies": {
+    "preact": "^10.29.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@preact/preset-vite": "^2.10.6",
+    "@testing-library/preact": "^3.2.6",
+    "acorn": "^8.19.0",
+    "eslint": "^10.15.0",
+    "eslint-plugin-compat": "^7.0.2",
+    "globals": "^17.14.0",
+    "jsdom": "^31.0.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.74.0",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.2"
+  }
+}
