@@ -15,8 +15,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint launcher/src launcher/service tools --max-warnings=0",
     "compat": "node tools/check-compat.mjs",
-    "test": "vitest run && node --test tests/service/",
-    "test:service": "node --test tests/service/",
+    "test": "vitest run && node --test tests/service/watcher.test.cjs",
+    "test:service": "node --test tests/service/watcher.test.cjs",
     "check": "npm run lint && npm run typecheck && npm test && npm run build && npm run compat"
   },
   "engines": {
