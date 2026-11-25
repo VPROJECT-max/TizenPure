@@ -214,22 +214,35 @@ test("service files are plain ES5", () => {
   }
 });
 
-test("control endpoints refuse foreign pages", () => {
+test("control endpoints refuse foreign pages and never expose replies to them", () => {
   const service = require("../../launcher/service/index.js");
   const { watcher } = boot({ apps: {} });
-  service._setWatcher(watcher);
+  let launcherOnScreen = true;
+  service._setWatcher(watcher, (cb) => cb(launcherOnScreen));
   const call = (method, url, headers = {}) => {
     const out = {};
     service._handle(
       { method, url, headers },
-      { writeHead: (code) => (out.code = code), end: (body) => (out.body = body) },
+      { writeHead: (code, h) => ((out.code = code), (out.headers = h || {})), end: (body) => (out.body = body) },
     );
     return out;
   };
+  const launcher = { origin: "file://", "x-tizenpure": "1" };
   assert.equal(call("POST", "/mode?mode=off", { origin: "https://evil.example", "x-tizenpure": "1" }).code, 403);
   assert.equal(call("POST", "/mode?mode=off", {}).code, 403);
-  assert.equal(call("POST", "/mode?mode=off", { origin: "file://", "x-tizenpure": "1" }).code, 200);
+  assert.equal(call("OPTIONS", "/mode", { origin: "https://evil.example" }).code, 403);
+  assert.equal(call("POST", "/mode?mode=off", launcher).code, 200);
   assert.equal(watcher.status().mode, "off");
-  assert.equal(call("GET", "/status").code, 200);
+  // A safety disable can only be undone while TizenPure itself is on screen.
+  watcher.disable();
+  launcherOnScreen = false;
+  assert.equal(call("POST", "/enable", launcher).code, 403);
+  assert.ok(watcher.status().disabled);
+  launcherOnScreen = true;
+  assert.equal(call("POST", "/enable", launcher).code, 200);
+  assert.equal(watcher.status().disabled, null);
+  // Replies are readable only by the launcher's origin.
+  assert.equal(call("GET", "/status", { origin: "https://evil.example" }).headers["Access-Control-Allow-Origin"], undefined);
+  assert.equal(call("GET", "/status", { origin: "file://" }).headers["Access-Control-Allow-Origin"], "file://");
   assert.equal(call("GET", "/nope").code, 404);
 });

@@ -143,9 +143,12 @@ function resolveStore(done) {
   }
 }
 
+// Only the launcher's own origin may read replies; other pages get no CORS header at all.
 function reply(res, code, value, origin) {
   var headers = { "Content-Type": "application/json", "Cache-Control": "no-store" };
-  headers["Access-Control-Allow-Origin"] = origin && LAUNCHER_ORIGINS[origin] ? origin : "*";
+  if (origin && LAUNCHER_ORIGINS[origin]) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
   res.writeHead(code, headers);
   res.end(JSON.stringify(value));
 }
@@ -165,9 +168,16 @@ function parseQuery(url) {
   return out;
 }
 
-// Read-only and tracking endpoints are GET (simple requests, no preflight).
-// Settings changes need a custom header, which a foreign web page cannot send without a
-// preflight that we only answer for the launcher's own origin.
+// Read-only and tracking endpoints are GET (simple requests, no preflight). They can only
+// make the watcher stand aside, never make it act. Settings changes (POST) need a custom
+// header, which a foreign web page cannot send without a preflight we only answer for the
+// launcher's origin, AND TizenPure must be on screen right then: a page in the TV browser
+// can never re-enable a watcher that turned itself off for safety.
+var launcherVisible = function (cb) {
+  appStatus(core.constants.SELF, function (me) {
+    cb(!!(me && me.visible));
+  });
+};
 function handle(req, res) {
   var url = req.url || "";
   var path = url.split("?")[0];
@@ -179,7 +189,7 @@ function handle(req, res) {
       return;
     }
     res.writeHead(204, {
-      "Access-Control-Allow-Origin": origin || "*",
+      "Access-Control-Allow-Origin": origin || "file://",
       "Access-Control-Allow-Methods": "GET, POST",
       "Access-Control-Allow-Headers": "X-TizenPure"
     });
@@ -191,21 +201,28 @@ function handle(req, res) {
       reply(res, 403, { error: "launcher only" });
       return;
     }
-    if (path === "/mode" && !watcher.setMode(query.mode)) {
-      reply(res, 400, { error: "bad mode" }, origin);
-      return;
-    }
-    if (path === "/boot") {
-      watcher.setOpenOnBoot(query.value === "1");
-    } else if (path === "/enable") {
-      watcher.enable();
-    } else if (path === "/disable") {
-      watcher.disable();
-    } else if (path !== "/mode") {
+    if (["/mode", "/boot", "/enable", "/disable"].indexOf(path) < 0) {
       reply(res, 404, { error: "not found" }, origin);
       return;
     }
-    reply(res, OK, watcher.status(), origin);
+    launcherVisible(function (visible) {
+      if (!visible) {
+        reply(res, 403, { error: "open TizenPure to change this" }, origin);
+        return;
+      }
+      if (path === "/mode" && !watcher.setMode(query.mode)) {
+        reply(res, 400, { error: "bad mode" }, origin);
+        return;
+      }
+      if (path === "/boot") {
+        watcher.setOpenOnBoot(query.value === "1");
+      } else if (path === "/enable") {
+        watcher.enable();
+      } else if (path === "/disable") {
+        watcher.disable();
+      }
+      reply(res, OK, watcher.status(), origin);
+    });
     return;
   }
   if (path === "/home") {
@@ -284,6 +301,9 @@ module.exports.onStop = module.exports.onExit;
 module.exports._handle = function (req, res) {
   handle(req, res);
 };
-module.exports._setWatcher = function (w) {
+module.exports._setWatcher = function (w, visibleCheck) {
   watcher = w;
+  if (visibleCheck) {
+    launcherVisible = visibleCheck;
+  }
 };
