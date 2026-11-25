@@ -13,7 +13,8 @@ import re
 # Exact model names (as reported by :8001/api/v2/ `modelName`) that passed acceptance.
 VERIFIED_MODELS = {
     # Crystal UHD CU7172 (2023, Tizen 9.0). The 65" sibling is attested by AeroTizen's
-    # compatibility table; the 55" passed TizenPure's read-only doctor (M1).
+    # compatibility table; the 55" passed TizenPure's doctor, signing, launcher and watcher
+    # acceptance (docs/compatibility.md).
     "UE55CU7172UXXH": 'Crystal UHD CU7172 55" (2023)',
     "UE65CU7172UXXH": 'Crystal UHD CU7172 65" (2023)',
 }

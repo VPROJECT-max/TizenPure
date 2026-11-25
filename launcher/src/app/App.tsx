@@ -69,6 +69,11 @@ const cycle = <T,>(values: readonly T[], current: T, delta: number): T =>
   values[(values.indexOf(current) + delta + values.length * 4) % values.length];
 
 const perPage = (s: Settings) => s.columns * s.rows;
+// Tizen 9 user agents carry the engine as "120.0.6099.5/9.0" with no "Chrome/" token.
+export const engineVersion = (ua: string) => {
+  const match = ua.match(/Chrome\/(\d+)/) || ua.match(/\) (\d{2,3})\.\d+\.\d+\.\d+\//);
+  return match ? "Chromium " + match[1] : "-";
+};
 const title = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
 export const App = ({ platform, storage, version }: Props) => {
@@ -322,7 +327,7 @@ export const App = ({ platform, storage, version }: Props) => {
       : [{ id: "nohidden", section: t("settings.apps"), label: t("settings.noHidden"), kind: "info" as const }]),
     { id: "version", section: t("settings.about"), label: t("about.version"), kind: "info", value: version },
     { id: "tv", label: t("about.tv"), kind: "info", value: [device.model, device.platform && "Tizen " + device.platform, device.firmware].filter(Boolean).join("  ") || "-" },
-    { id: "engine", label: t("about.engine"), kind: "info", value: ((device.userAgent.match(/Chrome\/(\d+)/) || [])[1] ? "Chromium " + (device.userAgent.match(/Chrome\/(\d+)/) || [])[1] : "-") },
+    { id: "engine", label: t("about.engine"), kind: "info", value: engineVersion(device.userAgent) },
     { id: "credits", label: t("about.credits"), kind: "info" },
   ];
 

@@ -3,6 +3,8 @@
 // SmartThings, Apple TV (aria-video), TV Plus and Gaming Hub.
 export const SAMSUNG_HIDDEN = new RegExp(
   "^(org\\.volt\\.|org\\.tizen\\.(?!browser$|netflix|primevideo$|globoplay|apple)|org\\.tizen\\.netflixlowmem$|ise-|ug-|d75857a5-)" +
+    // Placeholder entries some firmware lists beside the real app (Apple Music, Prime Video).
+    "|-dummy$|_companionapp$" +
     "|[Ss]ervice$|[Dd]aemon|Preview$|syspopup|[Hh]elper$|AdPlayer|AdSuite|[Kk]eyboard|\\.OTApp$" +
     "|^com\\.samsung\\.calendar-account-manager" +
     "|^com\\.samsung\\.tv\\.(?!store$|SmartThingsApp$|aria-video$|knox-browser-win365$|tvplus$|gaminghub$)" +

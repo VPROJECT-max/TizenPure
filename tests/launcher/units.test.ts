@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { engineVersion } from "../../launcher/src/app/App";
 import { formatTime } from "../../launcher/src/home/Clock";
 import { createTranslate, resolveLanguage } from "../../launcher/src/i18n";
 import { artworkSources, storeIdFor } from "../../launcher/src/shared/apps/artwork";
@@ -49,6 +50,9 @@ describe("apps", () => {
     expect(visibleApp({ id: "com.samsung.tv.SmartThingsApp", name: "SmartThings" })).toBe(true);
     expect(visibleApp({ id: "9Ur5IzDKqV.TizenYouTube", name: "YouTube" })).toBe(true);
     expect(visibleApp({ id: "x.y", name: "Hidden", show: false })).toBe(false);
+    expect(visibleApp({ id: "org.tizen.apple.apple-music-dummy", name: "Apple Music" })).toBe(false);
+    expect(visibleApp({ id: "org.tizen.apple.apple-music", name: "Apple Music" })).toBe(true);
+    expect(visibleApp({ id: "com.samsung.tv.store", name: "Apps" })).toBe(true);
   });
   it("maps preloaded apps to the store id the TV's API knows", () => {
     expect(storeIdFor("org.tizen.netflix-app")).toBe("3201907018807");
@@ -64,6 +68,14 @@ describe("apps", () => {
     expect(sources[sources.length - 1]).toBe("file:///opt/usr/apps/a/icon.png");
     expect(sources.every((s) => s.indexOf("file://") === 0)).toBe(true);
     expect(artworkSources({ id: "a.b", icon: "", storeId: "3201907018807" }, false)).toEqual([]);
+  });
+});
+
+describe("about", () => {
+  it("reads the engine from Tizen 9 and desktop user agents", () => {
+    const tizen9 = "Mozilla/5.0 (SMART-TV; LINUX; Tizen 9.0) AppleWebKit/537.36 (KHTML, like Gecko) 120.0.6099.5/9.0 TV Safari/537.36";
+    expect(engineVersion(tizen9)).toBe("Chromium 120");
+    expect(engineVersion("Mozilla/5.0 Chrome/63.0.3239.84 Safari/537.36")).toBe("Chromium 63");
   });
 });
 

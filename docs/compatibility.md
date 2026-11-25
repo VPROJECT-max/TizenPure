@@ -16,7 +16,7 @@ sequence below and open a pull request with the results (`tizenpure doctor --jso
 
 | Model | Year | Tizen | doctor | sign/install | launcher | watcher | notes |
 |---|---|---|---|---|---|---|---|
-| UE55CU7172UXXH (Crystal UHD CU7172 55") | 2023 | 9.0 (armv7, ~M120) | ✅ | pending | pending | pending | read-only doctor passed |
+| UE55CU7172UXXH (Crystal UHD CU7172 55") | 2023 | 9.0 (armv7, Chromium 120.0.6099) | ✅ | ✅ | ✅ | ✅ | Home returns in ~3 s; double-Home escape, Netflix and YouTube report visibility and are never interrupted. Cold boot and Developer Mode off: pending |
 | UE65CU7172UXXH (65") | 2023 | 9.0 | - | - | - | - | launcher attested by AeroTizen's table |
 
 ## Acceptance sequence
@@ -34,6 +34,18 @@ Read-only first; stop at the first failure.
 5. DNS + privacy checklist; confirm account, SmartThings, TV Plus, the store and a firmware
    update check still work.
 6. Developer Mode off, restart, TizenPure still opens.
+
+## Results on UE55CU7172UXXH (Tizen 9.0)
+
+- Signing: Samsung certificate, hello-world install, launch (`visible: true` via the local API)
+  and uninstall all verified by read-back.
+- Launcher: full-glass tier chosen automatically, artwork from the TV's icon cache, no console
+  errors, Romanian locale picked up from the TV.
+- Watcher (real Home key over the TV's remote channel): Home on TizenPure → back in ~3 s;
+  Home again within 30 s → Samsung Home stays; Netflix and YouTube opened from outside TizenPure
+  report `visible` and are followed, never interrupted; Home inside Netflix → back in ~2.5 s.
+- Samsung Home (`com.samsung.tv.csfs`) cannot be opened over SDB (`launch failed[400]`), so
+  the Control Center's "Samsung Home" tile relies on the app-level launch from the TV itself.
 
 ## Watcher check
 
